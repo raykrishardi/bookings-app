@@ -65,3 +65,29 @@ func (m *postgresDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 
 	return nil
 }
+
+func (m *postgresDBRepo) SearchAvailabilityByDatesByRoomID(start, end time.Time, roomID int) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var numRows int
+
+	query := `
+											SELECT count(id)
+											FROM room_restrictions
+											WHERE room_id = $1
+											AND $2 < end_date AND $3 > start_date
+	`
+
+	row := m.DB.QueryRowContext(ctx, query, roomID, start, end)
+	err := row.Scan(&numRows)
+	if err != nil {
+		return false, err
+	}
+
+	if numRows == 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
