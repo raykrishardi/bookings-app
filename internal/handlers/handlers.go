@@ -403,3 +403,39 @@ func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 		Form: forms.New(nil),
 	})
 }
+
+func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
+	// IMPORTANT: every time you login and logout, renew the session token
+	_ = m.App.Session.RenewToken(r.Context())
+
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	form := forms.New(r.PostForm)
+	form.Required("email", "password")
+	if !form.Valid() {
+		// TODO - take user back to page
+	}
+
+	id, _, err := m.DB.Authenticate(email, password)
+	if err != nil {
+		helpers.ServerError(w, err)
+
+		// If user enters incorrect credentials then redirect back to the login page
+		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		return
+	}
+
+	// Store user ID in the session to indicate successful login
+	// After successful login, redirect user back to the home page
+	m.App.Session.Put(r.Context(), "user_id", id)
+	m.App.Session.Put(r.Context(), "flash", "Logged in successfully!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
