@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -430,7 +431,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 
 	id, _, err := m.DB.Authenticate(email, password)
 	if err != nil {
-		helpers.ServerError(w, err)
+		log.Println(w, err)
 
 		// If user enters incorrect credentials then redirect back to the login page
 		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
