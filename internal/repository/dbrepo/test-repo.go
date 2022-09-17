@@ -23,3 +23,8 @@ package dbrepo
 // 	var reservations []models.Reservation
 // 	return reservations, nil
 // }
+
+// func (m *testDBRepo) GetReservationByID(id int) (models.Reservation, error) {
+// 	var r models.Reservation
+// 	return r, nil
+// }
