@@ -42,7 +42,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	// Any routes that start with /admin will need to be authenticated (e.g. /admin/dashboard)
 	mux.Route("/admin", func(mux chi.Router) {
-		mux.Use(Auth)
+		// mux.Use(Auth) // Commented for dev (will enable in prod)
 		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
 		mux.Get("/reservations-new", handlers.Repo.AdminNewReservations)
 		mux.Get("/reservations-all", handlers.Repo.AdminAllReservations)
