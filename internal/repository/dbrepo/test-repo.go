@@ -28,3 +28,15 @@ package dbrepo
 // 	var r models.Reservation
 // 	return r, nil
 // }
+
+// func (m *testDBRepo) UpdateReservation(r models.Reservation) error {
+// 	return nil
+// }
+
+// func (m *testDBRepo) DeleteReservation(id int) error {
+// 	return nil
+// }
+
+// func (m *testDBRepo) UpdateProcessedForReservation(id, processed int) error {
+// 	return nil
+// }
