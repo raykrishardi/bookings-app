@@ -568,3 +568,29 @@ func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Req
 func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{})
 }
+
+func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
+	// Get the reservation ID from route param
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Get the source (new/all) from route param
+	src := chi.URLParam(r, "src")
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	err = m.DB.UpdateProcessedForReservation(id, 1)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "flash", "Reservation marked as processed!")
+
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+}
